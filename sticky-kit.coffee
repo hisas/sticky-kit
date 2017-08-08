@@ -16,6 +16,8 @@ $.fn.stick_in_parent = (opts={}) ->
     offset_top
     spacer: manual_spacer
     bottoming: enable_bottoming
+    set_bottom
+    bar_height
   } = opts
 
   win_height = win.height()
@@ -92,7 +94,7 @@ $.fn.stick_in_parent = (opts={}) ->
 
           restore = true
 
-        top = elm.offset().top - (parseInt(elm.css("margin-top"), 10) or 0) - offset_top
+        top = if set_bottom then 0 else elm.offset().top - (parseInt(elm.css("margin-top"), 10) or 0) - offset_top
 
         height = elm.outerHeight true
 
@@ -114,6 +116,10 @@ $.fn.stick_in_parent = (opts={}) ->
       last_pos = undefined
       offset = offset_top
 
+      if set_bottom
+        win.resize ->
+          offset = offset_top =　win.height() - bar_height
+
       recalc_counter = recalc_every
 
       tick = ->
@@ -127,7 +133,7 @@ $.fn.stick_in_parent = (opts={}) ->
             recalc()
             recalced = true
 
-        if !recalced && doc_height != last_scroll_height
+        if !recalced && doc.height() != last_scroll_height
           recalc()
           recalced = true
 
@@ -265,5 +271,3 @@ $.fn.stick_in_parent = (opts={}) ->
 
     ) $ elm
   @
-
-

@@ -499,7 +499,48 @@ describe "sticky columns", ->
             expect(top cell).toBe 22
             expect(cell.is(".is_stuck")).toBe false
         ]
+        
+    it "uses set_bottom", (done) ->
+      write_iframe("""
+        <div class="stick_header">
+          <div class="stick_cell header"></div>
+          <div class="stick_body"></div>
+        </div>
+        <script type="text/javascript">
+          var bar_height = 40
+          $(".stick_cell").stick_in_parent({offset_top: $(window).height() - bar_height, set_bottom: true, bar_height: bar_height})
+        </script>
 
+      """).then (f) ->
+        cell = f.find(".stick_cell")
+
+        # f.on "scroll", => console.warn f.scrollTop(), top cell
+
+        scroll_each f, done, [
+          at 5, =>
+            expect(cell.is(".is_stuck")).toBe true
+            expect(cell.css("bottom")).toBe "0px"
+
+          at 15, =>
+            expect(cell.is(".is_stuck")).toBe true
+            expect(cell.css("bottom")).toBe "0px"
+
+          at 40, =>
+            expect(cell.is(".is_stuck")).toBe true
+            expect(cell.css("bottom")).toBe "0px"
+
+          at 125, =>
+            expect(cell.is(".is_stuck")).toBe true
+            expect(cell.css("bottom")).toBe "0px"
+
+          at 15, =>
+            expect(cell.is(".is_stuck")).toBe true
+            expect(cell.css("bottom")).toBe "0px"
+
+          at 0, =>
+            expect(cell.is(".is_stuck")).toBe true
+            expect(cell.css("bottom")).toBe "0px"
+        ]
 
   describe "events", ->
     it "detects events when scrolling sticky header", (done) ->
@@ -719,4 +760,3 @@ scroll_each = (f, done, points) ->
       done()
 
   scroll_to_next()
-
