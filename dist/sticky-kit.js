@@ -12,11 +12,11 @@
   win = $(window);
 
   $.fn.stick_in_parent = function(opts) {
-    var doc, elm, enable_bottoming, fn, i, inner_scrolling, len, manual_spacer, offset_top, outer_width, parent_selector, recalc_every, sticky_class;
+    var doc, elm, enable_bottoming, fn, i, inner_scrolling, len, manual_spacer, offset_top, outer_width, parent_selector, recalc_every, sticky_class, set_bottom, navibar_height;
     if (opts == null) {
       opts = {};
     }
-    sticky_class = opts.sticky_class, inner_scrolling = opts.inner_scrolling, recalc_every = opts.recalc_every, parent_selector = opts.parent, offset_top = opts.offset_top, manual_spacer = opts.spacer, enable_bottoming = opts.bottoming;
+    sticky_class = opts.sticky_class, inner_scrolling = opts.inner_scrolling, recalc_every = opts.recalc_every, parent_selector = opts.parent, offset_top = opts.offset_top, manual_spacer = opts.spacer, enable_bottoming = opts.bottoming, set_bottom = opts.set_bottom, navibar_height = opts.navibar_height;
     if (offset_top == null) {
       offset_top = 0;
     }
@@ -93,7 +93,7 @@
           }).removeClass(sticky_class);
           restore = true;
         }
-        top = elm.offset().top - (parseInt(elm.css("margin-top"), 10) || 0) - offset_top;
+        top = set_bottom ? 0 : elm.offset().top - (parseInt(elm.css("margin-top"), 10) || 0) - offset_top;
         height = elm.outerHeight(true);
         el_float = elm.css("float");
         if (spacer) {
@@ -115,6 +115,11 @@
       }
       last_pos = void 0;
       offset = offset_top;
+      if (set_bottom) {
+        $(window).resize(function() {
+          offset = offset_top =　$(window).height() - navibar_height;
+        });
+      }
       recalc_counter = recalc_every;
       tick = function() {
         var css, delta, recalced, scroll, will_bottom, win_height;
